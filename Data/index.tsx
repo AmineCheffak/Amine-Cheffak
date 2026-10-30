@@ -170,18 +170,6 @@ export const SKILLS = [
 ];
 // // À AJOUTER dans Data/index.tsx (fusionne les imports avec ceux que tu as déjà)
 import type { IconType } from "react-icons";
-// import { FaJava } from "react-icons/fa";
-// import { TbApi } from "react-icons/tb";
-// import {
-//   SiSpringboot,
-//   SiSpring,
-//   SiReact,
-//   SiMysql,
-//   SiOllama,
-//   SiJira,
-//   SiGithub,
-//   SiDocker,
-// } from "react-icons/si";
 
 export interface TechItem {
   name: string;
