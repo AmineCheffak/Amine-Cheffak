@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 900">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#18212a" />
+      <stop offset="1" stop-color="#0b0d10" />
+    </linearGradient>
+    <linearGradient id="portrait" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c8ff3d" stop-opacity=".34" />
+      <stop offset="1" stop-color="#55a8ff" stop-opacity=".08" />
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#c8ff3d" stroke-opacity=".045" stroke-width="1" />
+    </pattern>
+    <clipPath id="card">
+      <rect x="12" y="12" width="616" height="876" rx="42" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#card)">
+    <rect width="640" height="900" fill="url(#background)" />
+    <rect width="640" height="900" fill="url(#grid)" />
+    <path d="M0 0h640v158H0z" fill="#c8ff3d" />
+    <path d="M0 158h640" stroke="#e9ffad" stroke-opacity=".45" stroke-width="2" />
+    <g fill="#0b0d10">
+      <path d="M58 48h18v18H58zm26 0h18v18H84zm-26 26h18v18H58zm26 0h18v18H84zm26-26h18v44h-18z" />
+      <text x="158" y="70" font-family="Arial, sans-serif" font-size="19" font-weight="700" letter-spacing="3">PORTFOLIO ID</text>
+      <text x="158" y="111" font-family="Arial, sans-serif" font-size="30" font-weight="800" letter-spacing="1">CREATIVE TECH</text>
+      <text x="570" y="74" text-anchor="end" font-family="Arial, sans-serif" font-size="16" font-weight="700" letter-spacing="2">2026</text>
+    </g>
+    <text x="54" y="220" fill="#c8ff3d" font-family="Arial, sans-serif" font-size="16" font-weight="700" letter-spacing="4">FULL STACK DEVELOPER</text>
+    <rect x="54" y="250" width="532" height="298" rx="24" fill="url(#portrait)" stroke="#c8ff3d" stroke-opacity=".4" stroke-width="2" />
+    <circle cx="320" cy="365" r="72" fill="#c8ff3d" fill-opacity=".13" stroke="#c8ff3d" stroke-opacity=".6" stroke-width="3" />
+    <path d="M320 310c-27 0-46 21-46 48 0 23 13 40 31 47-49 10-81 44-87 91h204c-6-47-38-81-87-91 18-7 31-24 31-47 0-27-19-48-46-48z" fill="#d9e2e8" fill-opacity=".9" />
+    <path d="M54 576h532" stroke="#c8ff3d" stroke-opacity=".34" stroke-width="2" />
+    <text x="54" y="634" fill="#f4f7f8" font-family="Arial, sans-serif" font-size="44" font-weight="800" letter-spacing="1">BUILDING</text>
+    <text x="54" y="684" fill="#f4f7f8" font-family="Arial, sans-serif" font-size="44" font-weight="800" letter-spacing="1">DIGITAL IDEAS</text>
+    <text x="56" y="732" fill="#aeb8bf" font-family="Arial, sans-serif" font-size="19" letter-spacing="2">CODE · DESIGN · CREATE</text>
+    <g font-family="Arial, sans-serif" font-size="16" font-weight="700" letter-spacing="1">
+      <rect x="54" y="774" width="142" height="42" rx="21" fill="#c8ff3d" />
+      <text x="125" y="801" text-anchor="middle" fill="#0b0d10">SPRING</text>
+      <rect x="210" y="774" width="116" height="42" rx="21" fill="#c8ff3d" fill-opacity=".14" stroke="#c8ff3d" stroke-opacity=".55" />
+      <text x="268" y="801" text-anchor="middle" fill="#e9ffad">REACT</text>
+      <rect x="340" y="774" width="116" height="42" rx="21" fill="#c8ff3d" fill-opacity=".14" stroke="#c8ff3d" stroke-opacity=".55" />
+      <text x="398" y="801" text-anchor="middle" fill="#e9ffad">MYSQL</text>
+    </g>
+    <circle cx="558" cy="800" r="28" fill="none" stroke="#c8ff3d" stroke-opacity=".75" stroke-width="2" />
+    <path d="M546 800h24m-12-12v24" stroke="#c8ff3d" stroke-width="3" />
+    <text x="54" y="858" fill="#6e7c86" font-family="Arial, sans-serif" font-size="13" letter-spacing="3">DESIGNED TO BUILD WHAT'S NEXT</text>
+  </g>
+  <rect x="13" y="13" width="614" height="874" rx="41" fill="none" stroke="#d7e0e5" stroke-opacity=".25" stroke-width="2" />
+</svg>
