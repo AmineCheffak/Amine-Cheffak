@@ -31,8 +31,8 @@ function Hero() {
             className="rise text-lg leading-snug text-grid md:text-2xl"
             style={{ animationDelay: ".16s" }}
           >
-            Étudiant en Développement Digital à l'ISTA NTIC Safi. Spring Boot,
-            React.js et MySQL au quotidien, avec une curiosité pour l'IA
+            Étudiant en Développement Digital à l&apos;ISTA NTIC Safi. Spring Boot,
+            React.js et MySQL au quotidien, avec une curiosité pour l&apos;IA
             générative en local (Ollama).
           </p>
 

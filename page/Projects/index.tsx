@@ -28,7 +28,7 @@ const Projects = () => {
             04 — PROJETS
           </span>
           <h2 className="pr-rise font-cyber text-2xl font-bold sm:text-3xl" style={{ animationDelay: ".08s" }}>
-            Ce que j'ai construit.
+            Ce que j&apos;ai construit.
           </h2>
         </div>
 

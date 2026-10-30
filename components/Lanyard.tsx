@@ -895,30 +895,29 @@ const Lanyard = ({
   const settingsRef = useRef<Settings | null>(null);
   const applyRef = useRef<(() => void) | null>(null);
 
-  settingsRef.current = {
-    frontImage,
-    backImage,
-    imageFit: imageFit === 'contain' ? 'contain' : 'cover',
-    cardColor,
-    orientation: orientation === 'landscape' ? 'landscape' : 'portrait',
-    finish,
-    cornerRadius,
-    size,
-    anchor,
-    strapLength,
-    strapImage,
-    strapColor,
-    strapWidth,
-    metal,
-    gravity,
-    damping,
-    elasticity,
-    breeze,
-    interactive,
-    intro
-  };
-
   useEffect(() => {
+    settingsRef.current = {
+      frontImage,
+      backImage,
+      imageFit: imageFit === 'contain' ? 'contain' : 'cover',
+      cardColor,
+      orientation: orientation === 'landscape' ? 'landscape' : 'portrait',
+      finish,
+      cornerRadius,
+      size,
+      anchor,
+      strapLength,
+      strapImage,
+      strapColor,
+      strapWidth,
+      metal,
+      gravity,
+      damping,
+      elasticity,
+      breeze,
+      interactive,
+      intro
+    };
     applyRef.current?.();
   });
 

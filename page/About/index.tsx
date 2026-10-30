@@ -67,12 +67,12 @@ function About() {
                             onMouseLeave={() => setIsShow(false)}
                             className="mb-1 inline-block -rotate-2 cursor-pointer text-2xl text-fluo transition-transform duration-300 ease-in-out md:text-3xl"
                         >
-                            "Amine Cheffak"
+                            &quot;Amine Cheffak&quot;
                         </span>{" "}
                         Étudiant en Développement Digital, option Full Stack, avec une
-                        solide base en développement web, conception d'API REST et
+                        solide base en développement web, conception d&apos;API REST et
                         architecture logicielle. Je développe des applications avec Spring
-                        Boot, React.js et MySQL, et j'ai des connaissances en Node.js,
+                        Boot, React.js et MySQL, et j&apos;ai des connaissances en Node.js,
                         Express.js, Nest.js, TypeScript et MongoDB.
                     </p>
 
@@ -80,8 +80,8 @@ function About() {
                         className="about-rise text-base leading-relaxed text-grid sm:text-lg md:text-xl md:leading-snug"
                         style={{ animationDelay: ".24s" }}
                     >
-                        Je m'intéresse aux Design Patterns, au System Design, aux bases de
-                        données SQL/NoSQL, à l'intégration d'IA générative locale (Ollama)
+                        Je m&apos;intéresse aux Design Patterns, au System Design, aux bases de
+                        données SQL/NoSQL, à l&apos;intégration d&apos;IA générative locale (Ollama)
                         et aux bonnes pratiques de développement.
                     </p>
 
