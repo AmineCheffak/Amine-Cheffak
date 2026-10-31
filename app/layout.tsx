@@ -23,8 +23,10 @@ const rajdhani = Rajdhani({
   variable: "--font-rajdhani",
 });
 
+const siteUrl = "https://aminecheffak-dev.vercel.app";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://aminecheffak.vercel.app"),
+  metadataBase: new URL(siteUrl),
 
   title: {
     default: "Amine Cheffak | Full Stack Developer & Software Engineer",
@@ -52,22 +54,23 @@ export const metadata: Metadata = {
     "TypeScript",
     "Automation",
     "Automatisation",
-    "Artificial Intelligence",
-    "Intelligence Artificielle",
     "Ollama",
     "Local AI",
-    "Machine Learning",
   ],
 
   authors: [
     {
       name: "Amine Cheffak",
-      url: "https://aminecheffak.vercel.app",
+      url: siteUrl,
     },
   ],
 
   creator: "Amine Cheffak",
   publisher: "Amine Cheffak",
+
+  verification: {
+    google: "LIJ0s5qJf6tH5y4FCwHQ1FDBXsFS4pkH_CBAZAmrbHg",
+  },
 
   alternates: {
     canonical: "/",
@@ -76,7 +79,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    url: "https://aminecheffak.vercel.app",
+    url: siteUrl,
     siteName: "Amine Cheffak Portfolio",
     title: "Amine Cheffak | Full Stack Developer & Software Engineer",
     description:
