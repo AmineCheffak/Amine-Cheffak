@@ -1,12 +1,10 @@
 import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://aminecheffak-dev.vercel.app";
-
   return [
     {
-      url: baseUrl,
-      lastModified: new Date(),
+      url: "https://aminecheffak-dev.vercel.app/",
+      lastModified: "2026-10-31",
       changeFrequency: "monthly",
       priority: 1,
     },
