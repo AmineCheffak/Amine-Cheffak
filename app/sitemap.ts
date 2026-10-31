@@ -1,11 +1,14 @@
 import type { MetadataRoute } from "next";
 
-export default function robots(): MetadataRoute.Robots {
-  return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
+export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = "https://aminecheffak-dev.vercel.app";
+
+  return [
+    {
+      url: baseUrl,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 1,
     },
-    sitemap: "https://aminecheffak-dev.vercel.app/sitemap.xml",
-  };
+  ];
 }
