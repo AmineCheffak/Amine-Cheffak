@@ -174,7 +174,7 @@ export default function Globe({ className = "" }: { className?: string }) {
     {/* Halo */}
     <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-[10%] rounded-full shadow-[0_0_90px_rgba(200,255,61,0.12)]"
+        className="pointer-events-none absolute inset-[10%] rounded-full bg-gradient-to-b from-fluo/20 via-fluo/10 to-transparent blur-[100px]"
     />
       {/* Canvas WebGL (créé par cobe) */}
       <div ref={hostRef} aria-hidden="true" className="absolute inset-0" />

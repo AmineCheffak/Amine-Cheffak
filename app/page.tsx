@@ -36,12 +36,12 @@ export default function Pages() {
             <main className="w-full">
                 <CurrentPage key={count} goTo={goTo} />
             </main>
-        <div className="pointer-events-none fixed right-10 bottom-10 z-[99] flex items-center gap-2 rounded-full border border-white/10 bg-[#111720]/80 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-xl sm:px-3 md:bottom-10 md:px-4">
-            
+     <div className="pointer-events-none fixed right-10 bottom-10 z-[99] flex items-center gap-2 rounded-full border border-white/10 bg-[#110D1A]/80 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:px-3 md:bottom-10 md:px-4">
+
             <button
                 onClick={previousPage}
                 aria-label="Page précédente"
-                className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[#1A222D] text-[#EDEEF0] transition-all duration-300 hover:border-[#C8FF3D] hover:bg-[#C8FF3D] hover:text-[#0B0D10] hover:shadow-[0_0_20px_rgba(200,255,61,0.2)]"
+                className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[#1B1428] text-[#F5F0FC] transition-all duration-300 hover:border-[#A855F7] hover:bg-[#A855F7] hover:text-[#09070F] hover:shadow-[0_0_20px_rgba(168,85,247,0.35)]"
             >
                 <ArrowLeft size={21} />
             </button>
@@ -49,7 +49,7 @@ export default function Pages() {
             <button
                 onClick={nextPage}
                 aria-label="Page suivante"
-                className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[#1A222D] text-[#EDEEF0] transition-all duration-300 hover:border-[#C8FF3D] hover:bg-[#C8FF3D] hover:text-[#0B0D10] hover:shadow-[0_0_20px_rgba(200,255,61,0.2)]"
+                className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[#1B1428] text-[#F5F0FC] transition-all duration-300 hover:border-[#A855F7] hover:bg-[#A855F7] hover:text-[#09070F] hover:shadow-[0_0_20px_rgba(168,85,247,0.35)]"
             >
                 <ArrowRight size={21} />
             </button>
