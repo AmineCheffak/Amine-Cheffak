@@ -7,16 +7,17 @@
 @theme {
   --font-cyber: var(--font-orbitron);
   --font-tech: var(--font-rajdhani);
-  --color-void:   #0B0D10; /* khlfiya */
-  --color-dark:   #12151A; /* cartes, boutons nav */
-  --color-panel:  #1A1E25; /* tuiles d'icônes */
-  --color-line:   #232830; /* bordures des cartes */
-  --color-line-2: #2C323A; /* bordures boutons, orbites */
-  --color-dot:    #3A4048; /* dots inactifs */
-  --color-grid:   #9AA0A8; /* texte secondaire */
-  --color-soft:   #C9CDD3; /* texte des chips */
-  --color-ink:    #EDEEF0; /* texte principal */
-  --color-fluo:   #C8FF3D; /* accent */
+
+  --color-void:   #09070F;
+  --color-dark:   #110D1A;
+  --color-panel:  #1B1428;
+  --color-line:   #2A203B;
+  --color-line-2: #3D2D55;
+  --color-dot:    #514267;
+  --color-grid:   #9183A8;
+  --color-soft:   #C4B9D6;
+  --color-ink:    #F5F0FC;
+  --color-fluo:   #A855F7;
 }
 html {
   scroll-padding-top: 5rem;
