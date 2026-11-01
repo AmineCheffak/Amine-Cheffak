@@ -9,7 +9,6 @@ import {
   SiReact,
   SiSpringboot,
 } from "react-icons/si";
-
 interface HeroProps {
   /** Navigation entre les pages (1 = Hero, 2 = About, 3 = Skills, 4 = Projects, 5 = Service) */
   goTo?: (page: number) => void;
@@ -176,14 +175,13 @@ function Hero({ goTo }: HeroProps) {
                 aria-hidden="true"
               />
             </button>
-
             <a
               href="/CV_Amine_Cheffak.pdf"
               download="Amine_Cheffak_CV.pdf"
-              className="group inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#2C323A] px-5 text-sm font-bold tracking-wide transition hover:-translate-y-0.5 hover:border-fluo sm:px-7 sm:text-base"
+              className="group inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#3D2D55] bg-[#110D1A]/60 px-5 text-sm font-bold tracking-wide text-[#F5F0FC] transition-all duration-300 hover:-translate-y-1 hover:border-[#A855F7] hover:bg-[#A855F7] hover:text-white hover:shadow-[0_0_25px_rgba(168,85,247,0.35)] sm:px-7 sm:text-base"
             >
               <FiDownload
-                className="transition-transform group-hover:translate-y-0.5"
+                className="transition-transform duration-300 group-hover:translate-y-0.5"
                 aria-hidden="true"
               />
               Télécharger mon CV
