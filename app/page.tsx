@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { ComponentType } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import Header from "@/Ui/Header";
@@ -10,7 +11,10 @@ import Service from "@/page/Service";
 import About from "@/page/About";
 import Projects from "@/page/Projects";
 
-const pages = [Hero, About, Skills, Projects, Service];
+// Chaque page peut recevoir goTo(n) pour naviguer (ex. les boutons du Hero)
+type PageProps = { goTo?: (page: number) => void };
+
+const pages: ComponentType<PageProps>[] = [Hero, About, Skills, Projects, Service];
 
 export default function Pages() {
     const [count, setCount] = useState(1);
@@ -29,9 +33,8 @@ export default function Pages() {
         <div className="min-h-screen w-full bg-[#0B0D10] text-grid">
             <Header value={count} total={pages.length} />
 
-            {/* Chaque page gère déjà son propre min-h-screen + centrage */}
             <main className="w-full">
-                <CurrentPage key={count} />
+                <CurrentPage key={count} goTo={goTo} />
             </main>
 
             <div className="pointer-events-none fixed inset-x-0 bottom-5 z-[99] flex justify-between px-5 sm:px-8 md:bottom-10 md:px-12">
