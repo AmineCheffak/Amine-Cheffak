@@ -36,24 +36,25 @@ export default function Pages() {
             <main className="w-full">
                 <CurrentPage key={count} goTo={goTo} />
             </main>
+        <div className="pointer-events-none fixed right-10 bottom-10 z-[99] flex items-center gap-2 rounded-full border border-white/10 bg-[#111720]/80 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-xl sm:px-3 md:bottom-10 md:px-4">
+            
+            <button
+                onClick={previousPage}
+                aria-label="Page précédente"
+                className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[#1A222D] text-[#EDEEF0] transition-all duration-300 hover:border-[#C8FF3D] hover:bg-[#C8FF3D] hover:text-[#0B0D10] hover:shadow-[0_0_20px_rgba(200,255,61,0.2)]"
+            >
+                <ArrowLeft size={21} />
+            </button>
 
-            <div className="pointer-events-none fixed inset-x-0 bottom-5 z-[99] flex justify-between px-5 sm:px-8 md:bottom-10 md:px-12">
-                <button
-                    onClick={previousPage}
-                    aria-label="Page précédente"
-                    className="pointer-events-auto rounded-full border border-white/20 bg-black p-3 text-white transition hover:border-fluo hover:bg-black/80"
-                >
-                    <ArrowLeft size={22} />
-                </button>
+            <button
+                onClick={nextPage}
+                aria-label="Page suivante"
+                className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[#1A222D] text-[#EDEEF0] transition-all duration-300 hover:border-[#C8FF3D] hover:bg-[#C8FF3D] hover:text-[#0B0D10] hover:shadow-[0_0_20px_rgba(200,255,61,0.2)]"
+            >
+                <ArrowRight size={21} />
+            </button>
 
-                <button
-                    onClick={nextPage}
-                    aria-label="Page suivante"
-                    className="pointer-events-auto rounded-full border border-white/20 bg-black p-3 text-white transition hover:border-fluo hover:bg-black/80"
-                >
-                    <ArrowRight size={22} />
-                </button>
-            </div>
+        </div>
         </div>
     );
 }
