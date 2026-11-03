@@ -23,7 +23,7 @@ const rajdhani = Rajdhani({
   variable: "--font-rajdhani",
 });
 
-const siteUrl = "https://aminecheffak-dev.vercel.app";
+const siteUrl = "https://aminecheffak.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    "Amine Cheffak, développeur Full Stack à Safi, Maroc. Spécialisé en développement web, applications évolutives, automatisation et intelligence artificielle avec Ollama.",
+    "Amine Cheffak, ingénieur logiciel et développeur Full Stack à Safi, Maroc. Spécialisé en développement web, applications évolutives et automatisation.",
 
   applicationName: "Amine Cheffak Portfolio",
 
@@ -52,10 +52,7 @@ export const metadata: Metadata = {
     "Spring Boot",
     "Laravel",
     "TypeScript",
-    "Automation",
     "Automatisation",
-    "Ollama",
-    "Local AI",
   ],
 
   authors: [
@@ -83,14 +80,14 @@ export const metadata: Metadata = {
     siteName: "Amine Cheffak Portfolio",
     title: "Amine Cheffak | Full Stack Developer & Software Engineer",
     description:
-      "Découvrez le portfolio d'Amine Cheffak, développeur Full Stack passionné par le développement web, l'automatisation et l'intelligence artificielle.",
+      "Découvrez le portfolio d'Amine Cheffak, ingénieur logiciel Full Stack passionné par le développement web et l'automatisation.",
   },
 
   twitter: {
     card: "summary_large_image",
     title: "Amine Cheffak | Full Stack Developer",
     description:
-      "Développeur Full Stack spécialisé en développement web, automatisation et intelligence artificielle.",
+      "Ingénieur logiciel Full Stack spécialisé en développement web et automatisation.",
   },
 
   robots: {
