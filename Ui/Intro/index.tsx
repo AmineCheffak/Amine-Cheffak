@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
 interface IntroProps {
@@ -13,9 +13,14 @@ interface IntroProps {
 const NAME = Array.from("AmineCheffak");
 
 export default function Intro({ onReveal, onDone }: IntroProps) {
+  const [year, setYear] = useState("");
   const rootRef = useRef<HTMLDivElement>(null);
   const counterRef = useRef<HTMLSpanElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setYear(String(new Date().getFullYear()));
+  }, []);
 
   // Mnaa3 scroll mn dwra l intro
   useEffect(() => {
@@ -104,7 +109,9 @@ export default function Intro({ onReveal, onDone }: IntroProps) {
       {/* Haut */}
       <div className="intro-content flex items-center justify-between font-cyber text-[10px] tracking-[0.14em] text-grid md:text-xs">
         <span>PORTFOLIO</span>
-        <span>{new Date().getFullYear()}</span>
+        <span className="inline-block min-w-[4ch] text-right tabular-nums">
+          {year}
+        </span>
       </div>
 
       {/* Centre : smiya */}
