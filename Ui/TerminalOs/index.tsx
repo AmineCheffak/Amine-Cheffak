@@ -9,16 +9,13 @@ import {
 } from "react";
 
 import {
-  AnimatePresence,
-  motion,
-} from "framer-motion";
-
-import {
   Minus,
   Square,
   X,
   Terminal as TerminalIcon,
 } from "lucide-react";
+
+import { gsap, useGSAP } from "@/lib/gsap";
 
 interface TerminalLine {
   id: number;
@@ -74,12 +71,12 @@ const COMMANDS: Record<string, string> = {
     "Excellent choice! 🚀\nContact Amine to discuss your next project.",
 };
 
-export default function TerminalOs() {
+export default function TerminalOs({ onClose }: { onClose: () => void }) {
   const [input, setInput] = useState("");
-  const [lines, setLines] =
-    useState<TerminalLine[]>(INITIAL_LINES);
+  const [lines, setLines] = useState<TerminalLine[]>(INITIAL_LINES);
 
   const [isOpen, setIsOpen] = useState(true);
+  const [shouldRender, setShouldRender] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
 
@@ -88,7 +85,104 @@ export default function TerminalOs() {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const windowRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const nextId = useRef(4);
+  const lastAnimatedLineId = useRef(3);
+  const reducedMotionRef = useRef(false);
+
+  const { contextSafe } = useGSAP(
+    () => {
+      const overlay = overlayRef.current;
+      const terminalWindow = windowRef.current;
+      if (!overlay || !terminalWindow) return;
+
+      const media = gsap.matchMedia();
+
+      media.add("(prefers-reduced-motion: reduce)", () => {
+        reducedMotionRef.current = true;
+        gsap.set([overlay, terminalWindow], {
+          autoAlpha: 1,
+          scale: 1,
+          x: 0,
+          y: 0,
+        });
+      });
+
+      media.add("(prefers-reduced-motion: no-preference)", () => {
+        reducedMotionRef.current = false;
+        gsap.fromTo(
+          overlay,
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 0.25, ease: "power1.out" }
+        );
+        gsap.fromTo(
+          terminalWindow,
+          { autoAlpha: 0, scale: 0.85, y: 30 },
+          {
+            autoAlpha: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.55,
+            ease: "power3.out",
+          }
+        );
+      });
+
+      return () => media.revert();
+    },
+    { scope: overlayRef }
+  );
+
+  useGSAP(
+    () => {
+      const content = contentRef.current;
+      if (!content) return;
+
+      gsap.set(content, {
+        autoAlpha: 1,
+        scaleY: 1,
+        transformOrigin: "top",
+      });
+    },
+    { scope: overlayRef }
+  );
+
+  useGSAP(
+    () => {
+      const body = bodyRef.current;
+      if (!body) return;
+
+      const newLines = lines.filter(
+        (line) => line.id > lastAnimatedLineId.current
+      );
+
+      newLines.forEach((line) => {
+        const element = body.querySelector<HTMLElement>(
+          `[data-terminal-line-id="${line.id}"]`
+        );
+        if (!element) return;
+
+        if (reducedMotionRef.current) {
+          gsap.set(element, { autoAlpha: 1, x: 0 });
+        } else {
+          gsap.fromTo(
+            element,
+            { autoAlpha: 0, x: -8 },
+            {
+              autoAlpha: 1,
+              x: 0,
+              duration: 0.2,
+              ease: "power2.out",
+            }
+          );
+        }
+        lastAnimatedLineId.current = line.id;
+      });
+    },
+    { scope: overlayRef, dependencies: [lines] }
+  );
 
   useEffect(() => {
     bodyRef.current?.scrollTo({
@@ -97,10 +191,7 @@ export default function TerminalOs() {
     });
   }, [lines]);
 
-  const addLine = (
-    type: TerminalLine["type"],
-    content: string,
-  ) => {
+  const addLine = (type: TerminalLine["type"], content: string) => {
     setLines((previous) => [
       ...previous,
       {
@@ -111,9 +202,7 @@ export default function TerminalOs() {
     ]);
   };
 
-  const executeCommand = (
-    event: FormEvent<HTMLFormElement>,
-  ) => {
+  const executeCommand = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const command = input.trim();
@@ -122,10 +211,7 @@ export default function TerminalOs() {
 
     addLine("command", command);
 
-    setCommandHistory((previous) => [
-      ...previous,
-      command,
-    ]);
+    setCommandHistory((previous) => [...previous, command]);
 
     setHistoryIndex(-1);
 
@@ -159,7 +245,7 @@ export default function TerminalOs() {
   banner             Display welcome banner
   history            Command history
   clear              Clear terminal
-  exit               Close terminal`,
+  exit               Close terminal`
       );
     } else if (normalizedCommand === "banner") {
       addLine(
@@ -172,25 +258,22 @@ export default function TerminalOs() {
 /_/   \\_\\_|  |_|___|_| \\_|_____|
 
   FULL STACK DEVELOPER
-  Safi, Morocco`,
+  Safi, Morocco`
       );
     } else if (normalizedCommand === "history") {
       addLine(
         "output",
         commandHistory.length
           ? commandHistory
-              .map(
-                (item, index) =>
-                  `  ${index + 1}  ${item}`,
-              )
+              .map((item, index) => `  ${index + 1}  ${item}`)
               .join("\n")
-          : "No previous commands.",
+          : "No previous commands."
       );
     } else if (normalizedCommand === "date") {
       addLine("output", new Date().toString());
     } else if (normalizedCommand === "exit") {
       setInput("");
-      setIsOpen(false);
+      closeTerminal();
       return;
     } else if (normalizedCommand.startsWith("echo ")) {
       addLine("output", command.slice(5));
@@ -199,16 +282,14 @@ export default function TerminalOs() {
     } else {
       addLine(
         "error",
-        `zsh: command not found: ${command}\nType 'help' to see available commands.`,
+        `zsh: command not found: ${command}\nType 'help' to see available commands.`
       );
     }
 
     setInput("");
   };
 
-  const handleKeyDown = (
-    event: KeyboardEvent<HTMLInputElement>,
-  ) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "ArrowUp") {
       event.preventDefault();
 
@@ -244,230 +325,213 @@ export default function TerminalOs() {
     }
   };
 
-  const closeTerminal = () => {
+  const closeTerminal = contextSafe(() => {
+    if (!isOpen) return;
+
     setIsOpen(false);
-  };
+    if (reducedMotionRef.current || !overlayRef.current) {
+      setShouldRender(false);
+      onClose();
+      return;
+    }
+
+    gsap.to(overlayRef.current, {
+      autoAlpha: 0,
+      duration: 0.25,
+      ease: "power1.out",
+      overwrite: "auto",
+      onComplete: () => {
+        setShouldRender(false);
+        onClose();
+      },
+    });
+  });
+
+  const toggleMinimize = contextSafe(() => {
+    const nextIsMinimized = !isMinimized;
+    setIsMinimized(nextIsMinimized);
+
+    const content = contentRef.current;
+    if (!content) return;
+
+    const target = nextIsMinimized ? 0 : 1;
+    if (reducedMotionRef.current) {
+      gsap.set(content, { autoAlpha: target, scaleY: target });
+      return;
+    }
+
+    gsap.to(content, {
+      autoAlpha: target,
+      scaleY: target,
+      transformOrigin: "top",
+      duration: 0.2,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
+  });
+
+  if (!shouldRender) return null;
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          key="terminal-overlay"
-          className="fixed inset-0 z-[99] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) {
-              closeTerminal();
-            }
-          }}
+    <div
+      ref={overlayRef}
+      className="fixed inset-0 z-[99] flex items-center justify-center bg-void/30 p-4 backdrop-blur-md"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) {
+          closeTerminal();
+        }
+      }}
+    >
+      <div
+        ref={windowRef}
+        onClick={() => inputRef.current?.focus()}
+        className={`terminal-window flex flex-col overflow-hidden rounded-xl border border-terminal-border bg-terminal-bg/75 font-mono text-terminal-fg shadow-2xl backdrop-blur-xl ${
+          isMaximized
+            ? "h-[96vh] w-[96vw]"
+            : "h-[90vh] w-[60vw] max-md:w-[95vw]"
+        } ${isMinimized ? "!h-12" : ""}`}
+      >
+        {/* Title Bar */}
+        <div className="relative flex h-12 shrink-0 items-center justify-between border-b border-terminal-border bg-terminal-chrome/60 px-4">
+          <div className="flex items-center gap-2">
+            {/* Close */}
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                closeTerminal();
+              }}
+              aria-label="Close terminal"
+              className="flex h-3 w-3 items-center justify-center rounded-full bg-[#FF5F57] text-black/70 transition hover:brightness-125"
+            >
+              <X size={9} />
+            </button>
+
+            {/* Minimize */}
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                toggleMinimize();
+              }}
+              aria-label="Minimize terminal"
+              className="flex h-3 w-3 items-center justify-center rounded-full bg-[#FEBC2E] text-black/70 transition hover:brightness-125"
+            >
+              <Minus size={9} />
+            </button>
+
+            {/* Maximize */}
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                setIsMaximized((previous) => !previous);
+                setIsMinimized(false);
+              }}
+              aria-label="Maximize terminal"
+              className="flex h-3 w-3 items-center justify-center rounded-full bg-[#28C840] text-black/70 transition hover:brightness-125"
+            >
+              <Square size={7} />
+            </button>
+          </div>
+
+          <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2 text-xs text-terminal-muted">
+            <TerminalIcon size={14} />
+
+            <span className="whitespace-nowrap">amine — zsh — 80×24</span>
+          </div>
+
+          <div className="w-10" />
+        </div>
+
+        {/* Animated Terminal Content */}
+        <div
+          ref={contentRef}
+          aria-hidden={isMinimized}
+          className={`flex min-h-0 flex-1 flex-col overflow-hidden ${
+            isMinimized ? "pointer-events-none" : ""
+          }`}
         >
-          <motion.div
-            onClick={() => inputRef.current?.focus()}
-            initial={{
-              opacity: 0,
-              scale: 0.85,
-              y: 30,
-              filter: "blur(12px)",
-            }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              y: 0,
-              filter: "blur(0px)",
-            }}
-            exit={{
-              opacity: 0,
-              scale: 0.9,
-              y: 20,
-              filter: "blur(8px)",
-            }}
-            transition={{
-              type: "spring",
-              stiffness: 260,
-              damping: 24,
-            }}
-            className={`flex flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0B0B0F]/40 font-mono shadow-[0_0_60px_rgba(168,85,247,0.15)] backdrop-blur-2xl ${
-              isMaximized
-                ? "h-[96vh] w-[96vw]"
-                : "h-[90vh] w-[60vw] max-md:w-[95vw]"
-            } ${isMinimized ? "!h-12" : ""}`}
+          {/* Terminal Body */}
+          <div
+            ref={bodyRef}
+            className="min-h-0 flex-1 overflow-y-auto p-5 text-xs leading-6 sm:text-sm sm:leading-7"
           >
-            {/* Title Bar */}
-            <div className="relative flex h-12 shrink-0 items-center justify-between border-b border-white/10 bg-white/5 px-4">
-              <div className="flex items-center gap-2">
-                {/* Close */}
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    closeTerminal();
-                  }}
-                  aria-label="Close terminal"
-                  className="flex h-3 w-3 items-center justify-center rounded-full bg-[#FF5F57] text-black/70 transition hover:brightness-125"
-                >
-                  <X size={9} />
-                </button>
+            <p className="mb-4 text-terminal-muted">
+              PortfolioOS [Version 1.0.0]
+            </p>
 
-                {/* Minimize */}
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-
-                    setIsMinimized((previous) => !previous);
-                  }}
-                  aria-label="Minimize terminal"
-                  className="flex h-3 w-3 items-center justify-center rounded-full bg-[#FEBC2E] text-black/70 transition hover:brightness-125"
-                >
-                  <Minus size={9} />
-                </button>
-
-                {/* Maximize */}
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-
-                    setIsMaximized((previous) => !previous);
-                    setIsMinimized(false);
-                  }}
-                  aria-label="Maximize terminal"
-                  className="flex h-3 w-3 items-center justify-center rounded-full bg-[#28C840] text-black/70 transition hover:brightness-125"
-                >
-                  <Square size={7} />
-                </button>
-              </div>
-
-              <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2 text-xs text-white/50">
-                <TerminalIcon size={14} />
-
-                <span className="whitespace-nowrap">
-                  amine — zsh — 80×24
-                </span>
-              </div>
-
-              <div className="w-10" />
-            </div>
-
-            {/* Animated Terminal Content */}
-            <AnimatePresence initial={false}>
-              {!isMinimized && (
-                <motion.div
-                  key="terminal-content"
-                  initial={{
-                    opacity: 0,
-                    height: 0,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    height: "auto",
-                  }}
-                  exit={{
-                    opacity: 0,
-                    height: 0,
-                  }}
-                  transition={{ duration: 0.2 }}
-                  className="flex min-h-0 flex-1 flex-col overflow-hidden"
-                >
-                  {/* Terminal Body */}
-                  <div
-                    ref={bodyRef}
-                    className="min-h-0 flex-1 overflow-y-auto p-5 text-xs leading-6 sm:text-sm sm:leading-7"
-                  >
-                    <p className="mb-4 text-white/40">
-                      PortfolioOS [Version 1.0.0]
-                    </p>
-
-                    {/* Command History */}
-                    <AnimatePresence initial={false}>
-                      {lines.map((line) => (
-                        <motion.div
-                          key={line.id}
-                          initial={{
-                            opacity: 0,
-                            x: -8,
-                          }}
-                          animate={{
-                            opacity: 1,
-                            x: 0,
-                          }}
-                          transition={{ duration: 0.2 }}
-                          className="mb-1 whitespace-pre-wrap break-words"
-                        >
-                          {line.type === "command" ? (
-                            <p>
-                              <span className="text-[#A855F7]">
-                                amine@portfolio ~ %
-                              </span>
-
-                              <span className="ml-2 text-white">
-                                {line.content}
-                              </span>
-                            </p>
-                          ) : (
-                            <p
-                              className={
-                                line.type === "error"
-                                  ? "text-[#FF6B6B]"
-                                  : line.type === "success"
-                                    ? "text-[#A855F7]"
-                                    : "text-[#B7F7C1]"
-                              }
-                            >
-                              {line.content}
-                            </p>
-                          )}
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-
-                    {/* Input Line */}
-                    <form
-                      onSubmit={executeCommand}
-                      className="mt-2 flex items-center gap-2"
-                    >
-                      <span className="shrink-0 text-[#A855F7]">
-                        amine@portfolio ~ %
-                      </span>
-
-                      <input
-                        ref={inputRef}
-                        type="text"
-                        value={input}
-                        onChange={(event) =>
-                          setInput(event.target.value)
-                        }
-                        onKeyDown={handleKeyDown}
-                        autoComplete="off"
-                        autoCapitalize="off"
-                        spellCheck={false}
-                        aria-label="Terminal command input"
-                        className="min-w-0 flex-1 border-none bg-transparent text-[#B7F7C1] outline-none caret-[#A855F7]"
-                        autoFocus
-                      />
-
-                      <span className="pointer-events-none hidden h-4 w-1 animate-pulse bg-[#A855F7] sm:block" />
-                    </form>
-                  </div>
-
-                  {/* Status Bar */}
-                  <div className="flex h-8 shrink-0 items-center justify-between border-t border-white/10 bg-white/5 px-4 text-[10px] text-white/40">
-                    <span>zsh · interactive shell</span>
-
-                    <span className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#28C840]" />
-                      SYSTEM ONLINE
+            {/* Command History */}
+            {lines.map((line) => (
+              <div
+                key={line.id}
+                data-terminal-line-id={line.id}
+                className="mb-1 whitespace-pre-wrap break-words"
+              >
+                {line.type === "command" ? (
+                  <p>
+                    <span className="text-terminal-prompt">
+                      amine@portfolio ~ %
                     </span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+
+                    <span className="ml-2 text-terminal-fg">
+                      {line.content}
+                    </span>
+                  </p>
+                ) : (
+                  <p
+                    className={
+                      line.type === "error"
+                        ? "text-terminal-error"
+                        : line.type === "success"
+                          ? "text-terminal-success"
+                          : "text-terminal-output"
+                    }
+                  >
+                    {line.content}
+                  </p>
+                )}
+              </div>
+            ))}
+
+            {/* Input Line */}
+            <form
+              onSubmit={executeCommand}
+              className="mt-2 flex items-center gap-2"
+            >
+              <span className="shrink-0 text-terminal-prompt">
+                amine@portfolio ~ %
+              </span>
+
+              <input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                onKeyDown={handleKeyDown}
+                autoComplete="off"
+                autoCapitalize="off"
+                spellCheck={false}
+                aria-label="Terminal command input"
+                className="min-w-0 flex-1 border-none bg-transparent text-terminal-output outline-none caret-terminal-prompt"
+                autoFocus
+              />
+
+              <span className="pointer-events-none hidden h-4 w-1 animate-pulse bg-terminal-prompt sm:block" />
+            </form>
+          </div>
+
+          {/* Status Bar */}
+          <div className="flex h-8 shrink-0 items-center justify-between border-t border-terminal-border bg-terminal-chrome/60 px-4 text-[10px] text-terminal-muted">
+            <span>zsh · interactive shell</span>
+
+            <span className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#28C840]" />
+              SYSTEM ONLINE
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

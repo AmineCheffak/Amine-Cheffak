@@ -1,66 +1,117 @@
 "use client";
 
-import CartStatus from "@/Ui/CartStatus";
+import Image from "next/image";
+import { useRef, useState } from "react";
+
 import CartInfo from "@/Ui/CartInfos";
+import CartStatus from "@/Ui/CartStatus";
 import { INFOS, STATS } from "@/Data/index";
-import { useState } from "react";
+import { gsap, useGSAP } from "@/lib/gsap";
 
 function About() {
     const [isShow, setIsShow] = useState(false);
-    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const containerRef = useRef<HTMLDivElement>(null);
+    const imageRef = useRef<HTMLDivElement>(null);
+    const moveXRef = useRef<((value: number) => void) | null>(null);
+    const moveYRef = useRef<((value: number) => void) | null>(null);
 
-    const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-        setPosition({
-            x: e.clientX,
-            y: e.clientY,
+    const { contextSafe } = useGSAP(() => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        const elements = gsap.utils.toArray<HTMLElement>(
+            "[data-gsap-rise]",
+            container
+        );
+        const media = gsap.matchMedia();
+
+        media.add("(prefers-reduced-motion: reduce)", () => {
+            gsap.set(elements, { autoAlpha: 1, y: 0 });
         });
-    };
+
+        media.add("(prefers-reduced-motion: no-preference)", () => {
+            const timeline = gsap.timeline({
+                scrollTrigger: {
+                    trigger: container,
+                    start: "top 75%",
+                    once: true,
+                },
+            });
+            elements.forEach((element) => {
+                timeline.fromTo(
+                    element,
+                    { autoAlpha: 0, y: 24 },
+                    {
+                        autoAlpha: 1,
+                        y: 0,
+                        duration: 0.8,
+                        ease: "power3.out",
+                        immediateRender: false,
+                    },
+                    Number(element.dataset.gsapDelay ?? 0)
+                );
+                });
+            });
+
+            if (imageRef.current) {
+            moveXRef.current = gsap.quickTo(imageRef.current, "x", {
+                duration: 0.4,
+                ease: "power3.out",
+            });
+            moveYRef.current = gsap.quickTo(imageRef.current, "y", {
+                duration: 0.4,
+                ease: "power3.out",
+            });
+        }
+
+        return () => {
+            media.revert();
+            moveXRef.current = null;
+            moveYRef.current = null;
+        };
+    }, { scope: containerRef });
+
+    const handleMouseMove = contextSafe((event: React.MouseEvent<HTMLElement>) => {
+        moveXRef.current?.(event.clientX + 20);
+        moveYRef.current?.(event.clientY + 20);
+    });
 
     return (
-        <section
-            id="about"
+        <div
+            ref={containerRef}
             onMouseMove={handleMouseMove}
-            className="relative flex min-h-screen w-full items-center overflow-hidden bg-[#0B0D10] px-5 pb-28 pt-28 font-tech text-[#EDEEF0] sm:px-8 md:px-12"
+            className="relative flex min-h-screen w-full items-center overflow-hidden px-5 pb-28 pt-28 font-tech text-ink sm:px-8 md:px-12"
         >
             {/* Floating Profile Image (desktop seulement : pas de souris sur mobile) */}
             <div
-                className={`pointer-events-none fixed z-[99] hidden h-48 w-48 overflow-hidden rounded-full border-2 border-fluo shadow-[0_0_30px_rgba(182,240,156,0.25)] transition-opacity duration-200 md:block ${
+                ref={imageRef}
+                className={`profile-image-shadow pointer-events-none fixed left-0 top-0 z-[99] hidden h-48 w-48 will-change-transform overflow-hidden rounded-full border-2 border-fluo transition-opacity duration-200 md:block ${
                     isShow ? "opacity-100" : "opacity-0"
                 }`}
-                style={{
-                    left: position.x,
-                    top: position.y,
-                    transform: "translate(20px, 20px)",
-                }}
             >
-                <img
-                    src="https://media.licdn.com/dms/image/v2/D4D03AQHBVQE4Mrg5nw/profile-displayphoto-crop_800_800/B4DZmSdicDGgAI-/0/1759098842353?e=1795046400&v=beta&t=UXFRudA5pNVt8IDxanUTZ42hmcanvPByZmfVRUTUxA4"
+                <Image
+                    src="/amine.jpg"
                     alt="Amine Cheffak"
+                    width={800}
+                    height={800}
+                    loading="lazy"
+                    decoding="async"
                     className="h-full w-full object-cover object-center"
                 />
             </div>
-
-            {/* Background Grid */}
-            <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0"
-                style={{
-                    backgroundImage: "radial-gradient(#1B1F25 1px, transparent 1px)",
-                    backgroundSize: "28px 28px",
-                }}
-            />
 
             <div className="relative z-10 mx-auto grid w-full max-w-5xl items-center gap-8 md:gap-10 lg:grid-cols-[1fr_1.1fr]">
 
                 {/* Text */}
                 <div className="flex flex-col gap-4">
-                    <span className="about-rise font-cyber text-[11px] tracking-[0.14em] text-fluo md:text-xs">
+                    <span data-gsap-rise className="font-cyber text-[11px] tracking-[0.14em] text-fluo md:text-xs">
                         02 — À PROPOS
                     </span>
 
                     <p
-                        className="about-rise text-base leading-relaxed text-grid sm:text-lg md:text-xl md:leading-snug"
-                        style={{ animationDelay: ".16s" }}
+                        data-gsap-rise
+                        data-gsap-delay=".16"
+                        className="text-base leading-relaxed text-grid sm:text-lg md:text-xl md:leading-snug"
                     >
                         <span
                             onMouseEnter={() => setIsShow(true)}
@@ -77,8 +128,9 @@ function About() {
                     </p>
 
                     <p
-                        className="about-rise text-base leading-relaxed text-grid sm:text-lg md:text-xl md:leading-snug"
-                        style={{ animationDelay: ".24s" }}
+                        data-gsap-rise
+                        data-gsap-delay=".24"
+                        className="text-base leading-relaxed text-grid sm:text-lg md:text-xl md:leading-snug"
                     >
                         Je m&apos;intéresse aux Design Patterns, au System Design, aux bases de
                         données SQL/NoSQL, à l&apos;intégration d&apos;IA générative locale (Ollama)
@@ -87,8 +139,9 @@ function About() {
 
                     {/* Stats */}
                     <div
-                        className="about-rise mt-2 grid grid-cols-3 gap-2 sm:gap-3"
-                        style={{ animationDelay: ".32s" }}
+                        data-gsap-rise
+                        data-gsap-delay=".32"
+                        className="mt-2 grid grid-cols-3 gap-2 sm:gap-3"
                     >
                         {STATS.map((s, index) => (
                             <CartStatus
@@ -114,7 +167,7 @@ function About() {
                     ))}
                 </div>
             </div>
-        </section>
+        </div>
     );
 }
 

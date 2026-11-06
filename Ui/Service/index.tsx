@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 import type { ServiceItem } from "@/Data/";
 
 interface ServiceProps extends ServiceItem {
@@ -7,11 +9,12 @@ interface ServiceProps extends ServiceItem {
 const Service = ({ title, text, icon, index = 0 }: ServiceProps) => {
   return (
     <div
-      className="sv-rise group flex flex-col gap-3 rounded-2xl border border-[#232830] bg-dark p-5 transition duration-300 hover:-translate-y-1.5 hover:border-fluo"
-      style={{ animationDelay: `${0.1 + index * 0.08}s` }}
+      data-gsap-rise
+      data-gsap-delay={0.1 + index * 0.08}
+      className="group flex flex-col gap-3 rounded-2xl border border-line bg-dark p-5 transition duration-300 hover:-translate-y-1.5 hover:border-fluo"
     >
       <div className="flex items-center justify-between">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#2A3038] bg-[#1A1E25]">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-line-2 bg-panel">
           {icon}
         </div>
         <span className="font-cyber text-xs text-grid transition-colors group-hover:text-fluo">
@@ -24,4 +27,4 @@ const Service = ({ title, text, icon, index = 0 }: ServiceProps) => {
   );
 };
 
-export default Service;
+export default memo(Service);

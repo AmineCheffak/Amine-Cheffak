@@ -4,7 +4,29 @@ import { useEffect, useRef } from "react";
 import createGlobe from "cobe";
 import type { Globe as CobeGlobe } from "cobe";
 
+import { useTheme } from "@/Ui/ThemeProvider";
+
 type Vec3 = [number, number, number];
+
+const GLOBE_COLORS = {
+  dark: {
+    dark: 1,
+    baseColor: [0.97, 0.97, 0.97] as [number, number, number],
+    glowColor: [0.24, 0.2, 0.3] as [number, number, number],
+  },
+  light: {
+    dark: 0,
+    baseColor: [1, 1, 1] as [number, number, number],
+    glowColor: [0.95, 0.95, 0.97] as [number, number, number],
+  },
+} satisfies Record<
+  "dark" | "light",
+  {
+    dark: number;
+    baseColor: [number, number, number];
+    glowColor: [number, number, number];
+  }
+>;
 
 // Safi, Maroc
 const SAFI = { lat: 32.2994, lng: -9.2372 };
@@ -40,9 +62,12 @@ function facingPhi(lng: number) {
 }
 
 export default function Globe({ className = "" }: { className?: string }) {
+  const { theme } = useTheme();
+  const initialThemeRef = useRef(theme);
   const boxRef = useRef<HTMLDivElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
+  const globeRef = useRef<CobeGlobe | null>(null);
 
   useEffect(() => {
     const box = boxRef.current;
@@ -70,22 +95,22 @@ export default function Globe({ className = "" }: { className?: string }) {
     let globe: CobeGlobe | null = null;
     try {
       globe = createGlobe(canvas, {
-        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
         width: size,
         height: size,
         phi: base,
         theta: THETA,
-        dark: 1,
+        ...GLOBE_COLORS[initialThemeRef.current],
         diffuse: 1.2,
-        mapSamples: 16000,
-        mapBrightness: 6,
-        baseColor: [0.1, 0.13, 0.15],
-        markerColor: [0.78, 1, 0.24],
-        glowColor: [0.04, 0.05, 0.06],
+        mapSamples: 8000,
+        mapBrightness: 1.2,
+        markerColor: [0.18, 0.29, 1], // = #2F4BFF (fluo)
         markerElevation: 0,
       });
+      globeRef.current = globe;
     } catch {
       globe = null;
+      globeRef.current = null;
     }
 
     const frame = (now: number) => {
@@ -160,9 +185,14 @@ export default function Globe({ className = "" }: { className?: string }) {
       box.removeEventListener("pointerup", up);
       box.removeEventListener("pointercancel", up);
       globe?.destroy();
+      globeRef.current = null;
       host.replaceChildren();
     };
   }, []);
+
+  useEffect(() => {
+    globeRef.current?.update(GLOBE_COLORS[theme]);
+  }, [theme]);
 
   return (
     <div
@@ -171,11 +201,12 @@ export default function Globe({ className = "" }: { className?: string }) {
       aria-label="Globe terrestre centré sur Safi, Maroc"
       className={`relative aspect-square w-full cursor-grab touch-pan-y select-none active:cursor-grabbing ${className}`}
     >
-    {/* Halo */}
-    <div
+      {/* Halo
+      <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-[10%] rounded-full bg-gradient-to-b from-fluo/20 via-fluo/10 to-transparent blur-[100px]"
-    />
+        className="globe-halo pointer-events-none absolute inset-[10%] rounded-full"
+      /> */}
+
       {/* Canvas WebGL (créé par cobe) */}
       <div ref={hostRef} aria-hidden="true" className="absolute inset-0" />
 
@@ -188,9 +219,9 @@ export default function Globe({ className = "" }: { className?: string }) {
       >
         <span className="relative flex h-3 w-3 shrink-0">
           <span className="absolute inset-0 animate-ping rounded-full bg-fluo/70" />
-          <span className="relative h-3 w-3 rounded-full border-2 border-[#0B0D10] bg-fluo" />
+          <span className="relative h-3 w-3 rounded-full border-2 border-white bg-fluo" />
         </span>
-        <span className="whitespace-nowrap rounded-full border border-[#2C323A] bg-dark/90 px-3 py-1 font-cyber text-[10px] tracking-wider text-[#EDEEF0]">
+        <span         className="whitespace-nowrap rounded-full border border-line-2 bg-panel px-3 py-1 font-cyber text-[10px] tracking-wider text-ink">
           SAFI, MAROC
         </span>
       </div>

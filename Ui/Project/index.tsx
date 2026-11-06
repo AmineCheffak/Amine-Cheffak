@@ -1,14 +1,9 @@
 "use client";
 
-import { useRef } from "react";
-import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from "framer-motion";
+import { memo, useRef } from "react";
 
 import type { ProjectItem } from "@/Data/";
+import { gsap, useGSAP } from "@/lib/gsap";
 
 interface ProjectProps extends ProjectItem {
   delay?: number;
@@ -23,21 +18,43 @@ const Project = ({
   delay = 0,
 }: ProjectProps) => {
   const cardRef = useRef<HTMLAnchorElement>(null);
+  const rotateXRef = useRef<((value: number) => void) | null>(null);
+  const rotateYRef = useRef<((value: number) => void) | null>(null);
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+  const { contextSafe } = useGSAP(() => {
+    const card = cardRef.current;
+    if (!card) return;
 
-  const rotateX = useSpring(
-    useTransform(mouseY, [-0.5, 0.5], [10, -10]),
-    { stiffness: 180, damping: 18 }
-  );
+    gsap.set(card, {
+      rotationX: 0,
+      rotationY: 0,
+      transformPerspective: 1000,
+      transformStyle: "preserve-3d",
+    });
 
-  const rotateY = useSpring(
-    useTransform(mouseX, [-0.5, 0.5], [-10, 10]),
-    { stiffness: 180, damping: 18 }
-  );
+    const media = gsap.matchMedia();
+    media.add(
+      "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+      () => {
+        rotateXRef.current = gsap.quickTo(card, "rotationX", {
+          duration: 0.5,
+          ease: "power3.out",
+        });
+        rotateYRef.current = gsap.quickTo(card, "rotationY", {
+          duration: 0.5,
+          ease: "power3.out",
+        });
+        return () => {
+          rotateXRef.current = null;
+          rotateYRef.current = null;
+        };
+      }
+    );
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    return () => media.revert();
+  }, { scope: cardRef });
+
+  const handleMouseMove = contextSafe((e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!cardRef.current) return;
 
     const rect = cardRef.current.getBoundingClientRect();
@@ -45,37 +62,26 @@ const Project = ({
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
 
-    mouseX.set(x);
-    mouseY.set(y);
-  };
+    rotateXRef.current?.(-y * 20);
+    rotateYRef.current?.(x * 20);
+  });
 
-  const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
-  };
+  const handleMouseLeave = contextSafe(() => {
+    rotateXRef.current?.(0);
+    rotateYRef.current?.(0);
+  });
 
   return (
-    <motion.a
+    <a
       ref={cardRef}
+      data-gsap-rise
+      data-gsap-delay={delay}
       href={href}
       target="_blank"
       rel="noreferrer"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      initial={{ opacity: 0, y: 25 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.6,
-        delay,
-        ease: "easeOut",
-      }}
-      style={{
-        rotateX,
-        rotateY,
-        transformPerspective: 1000,
-        transformStyle: "preserve-3d",
-      }}
-      className="group relative flex min-h-[340px] flex-col gap-5 rounded-2xl border border-[#232830] bg-dark p-7 transition-colors duration-300 hover:border-fluo"
+      className="group relative flex min-h-[340px] flex-col gap-5 rounded-2xl border border-line bg-dark p-7 transition-colors duration-300 hover:border-fluo"
     >
       {/* Glow Effect */}
       <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
@@ -128,7 +134,7 @@ const Project = ({
           <li
             key={name}
             title={name}
-            className="group/tech flex h-10 w-10 items-center justify-center rounded-lg border border-[#2A3038] bg-[#1A1E25] transition duration-200 hover:-translate-y-1 hover:border-fluo"
+            className="group/tech flex h-10 w-10 items-center justify-center rounded-lg border border-line-2 bg-panel transition duration-200 hover:-translate-y-1 hover:border-fluo"
           >
             <Icon
               className="h-5 w-5 transition-transform duration-200 group-hover/tech:scale-125"
@@ -142,8 +148,8 @@ const Project = ({
 
       {/* Bottom Accent */}
       <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-fluo transition-all duration-500 group-hover:w-full" />
-    </motion.a>
+    </a>
   );
 };
 
-export default Project;
+export default memo(Project);

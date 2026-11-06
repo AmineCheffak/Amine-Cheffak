@@ -1,59 +1,122 @@
 "use client";
 
-import { useState } from "react";
-import type { ComponentType } from "react";
-import { ArrowLeft, ArrowRight,Terminal } from "lucide-react";
+import { useRef, useState } from "react";
+import { Terminal } from "lucide-react";
 
 import Header from "@/Ui/Header";
+import Intro from "@/Ui/Intro/";
 import Hero from "@/page/Hero";
 import Skills from "@/page/Skills";
 import Service from "@/page/Service";
 import About from "@/page/About";
 import Projects from "@/page/Projects";
-import Button from "@/Ui/Button";
 import TerminalOs from "@/Ui/TerminalOs";
-// Chaque page peut recevoir goTo(n) pour naviguer (ex. les boutons du Hero)
-type PageProps = { goTo?: (page: number) => void };
+import Button from "@/Ui/Button";
+import Footer from "@/Ui/Footer";
+import { ScrollTrigger, useGSAP } from "@/lib/gsap";
 
-const pages: ComponentType<PageProps>[] = [Hero, About, Skills, Projects, Service];
+const sections = [
+    { name: "Hero", component: Hero },
+    { name: "About", component: About },
+    { name: "Skills", component: Skills },
+    { name: "Projects", component: Projects },
+    { name: "Service", component: Service },
+];
 
 export default function Pages() {
-    const [count, setCount] = useState(1);
-    const [isShow,setIsShow] = useState(false)
-    const CurrentPage = pages[count - 1];
-    const goTo = (n: number) => {
-        setCount(n);
-        window.scrollTo({ top: 0 });
-    };
-    const nextPage = () => goTo((count % pages.length) + 1);
-    const previousPage = () => goTo(((count - 2 + pages.length) % pages.length) + 1);
+    const [isShow, setIsShow] = useState(false);
+    const [current, setCurrent] = useState(1);
+    const [ready, setReady] = useState(false);
+    const [introGone, setIntroGone] = useState(false);
+
+    const containerRef = useRef<HTMLDivElement>(null);
+    const sectionRefs = useRef<(HTMLElement | null)[]>([]);
+
+    useGSAP(
+        () => {
+            if (!ready) return;
+
+            let active = true;
+
+            sectionRefs.current.forEach((section, index) => {
+                if (!section) return;
+
+                ScrollTrigger.create({
+                    trigger: section,
+                    start: "top 50%",
+                    end: "bottom 50%",
+                    onToggle: (self) => {
+                        if (!self.isActive) return;
+                        setCurrent((currentIndex) =>
+                            currentIndex === index + 1 ? currentIndex : index + 1
+                        );
+                    },
+                });
+            });
+
+            void document.fonts.ready.then(() => {
+                if (active) ScrollTrigger.refresh();
+            });
+
+            return () => {
+                active = false;
+            };
+        },
+        { scope: containerRef, dependencies: [ready] }
+    );
 
     return (
-        <div className="min-h-screen w-full bg-[#0B0D10] text-grid">
-            <Header value={count} total={pages.length} />
-            <main className="w-full">
-                <CurrentPage key={count} goTo={goTo} />
-            </main>
-            {isShow && <TerminalOs/>}
-            <div className="flex justify-between">
-                <Button
-                    methode={() => setIsShow(!isShow)}
-                    style="fixed bottom-10 left-10 z-[99]"
-                >
-                    <Terminal size={21} />
-                </Button>
+        <div
+            ref={containerRef}
+            className={`min-h-screen w-full bg-void text-ink ${ready ? "" : "is-intro"}`}
+        >
+            {!introGone && (
+                <Intro
+                    onReveal={() => setReady(true)}
+                    onDone={() => {
+                        setIntroGone(true);
+                        requestAnimationFrame(() => ScrollTrigger.refresh());
+                    }}
+                />
+            )}
 
-                <div className="pointer-events-none fixed right-10 bottom-10 z-[99] flex items-center gap-2 rounded-full border border-white/10 bg-[#110D1A]/80 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:px-3 md:bottom-10 md:px-4">
-                    <Button methode={previousPage}>
-                    <ArrowLeft size={21} />
-                    </Button>
+            <div
+                aria-hidden="true"
+                className="bg-grid-lines pointer-events-none fixed inset-0 z-0"
+            />
 
-                    <Button methode={nextPage}>
-                    <ArrowRight size={21} />
-                    </Button>
-                </div>
-            </div>
-  
+            <Header value={current} total={sections.length} />
+
+            {ready &&
+                sections.map((section, index) => {
+                    const Section = section.component;
+
+                    return (
+                        <section
+                            key={section.name}
+                            ref={(el) => {
+                                sectionRefs.current[index] = el;
+                            }}
+                            className="relative z-10"
+                            id={section.name.toLowerCase()}
+                            data-number={String(index + 1).padStart(2, "0")}
+                        >
+                            <Section />
+                        </section>
+                    );
+                })}
+
+            <Button
+                methode={() => setIsShow((visible) => !visible)}
+                aria-label="Open terminal"
+                className="fixed bottom-7 right-10 z-50"
+            >
+                <Terminal size={21} aria-hidden="true" />
+            </Button>
+
+            {ready && <Footer onOpenTerminal={() => setIsShow(true)} />}
+
+            {isShow && <TerminalOs onClose={() => setIsShow(false)} />}
         </div>
     );
 }
