@@ -3,8 +3,6 @@ import Script from "next/script";
 import { Geist, Geist_Mono, Orbitron, Rajdhani } from "next/font/google";
 import "./globals.css";
 
-import { THEME_INIT_SCRIPT } from "@/Ui/ThemeProvider/theme-script";
-import { ThemeProvider } from "@/Ui/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -134,9 +132,8 @@ export default function RootLayout({
         <Script
           id="theme-init"
           strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
         />
-        <ThemeProvider>{children}</ThemeProvider>
+        {children}
       </body>
     </html>
   );
