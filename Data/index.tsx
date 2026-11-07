@@ -197,7 +197,7 @@ export const PROJECTS: ProjectItem[] = [
       { name: "React.js", icon: SiReact, color: "#61DAFB" },
       { name: "MySQL", icon: SiMysql, color: "#4DA3D9" },
     ],
-    href: "https://github.com/AmineCheffak/Store.git",
+    href: "https://blanket-listing-alternatives-shopper.trycloudflare.com/",
   },
   {
     num: "02",
