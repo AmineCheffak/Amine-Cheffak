@@ -108,17 +108,20 @@ React.js       Next.js
 TypeScript     JavaScript
 Spring Boot    Express.js
 NestJS         Laravel
-MySQL          PostgreSQL
+MySQL          Mariadb
 MongoDB        Docker
 Linux          Git
-Aws            C
+AWS            C
+GitHub         VS Code
+Jira           UML
+Sql            NoSQL
 `,
 
   projects: `Personal Projects:
 
 01. E-Commerce Application
     Spring Boot, React, MySQL, Docker , Aws
-    Production : https://blanket-listing-alternatives-shopper.trycloudflare.com/
+    Production : https://competing-handbags-proof-obligation.trycloudflare.com/
 
 02. Project Management Application
     React, TypeScript, NestJS
