@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Terminal as TerminalIcon } from "lucide-react";
 
 import TerminalTitleBar from "./TerminalTitleBar";
 import TerminalOutput from "./TerminalOutput";
@@ -12,13 +11,8 @@ import { playCommandSound } from "./playCommandSound";
 import { NewLine, TerminalLine } from "./types";
 
 export default function TerminalOs() {
-  const lineId = useRef(1);
-
-  const withIds = (items: NewLine[]): TerminalLine[] =>
-    items.map((item) => ({ ...item, id: lineId.current++ }));
-
   const [lines, setLines] = useState<TerminalLine[]>(() =>
-    withIds(INITIAL_LINES)
+    INITIAL_LINES.map((item, index) => ({ ...item, id: index + 1 }))
   );
   const [history, setHistory] = useState<string[]>([]);
 
@@ -39,22 +33,23 @@ export default function TerminalOs() {
   /* MAXIMIZED: ESC + LOCK PAGE SCROLL */
   useEffect(() => {
     if (!isMaximized) return;
-
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setIsMaximized(false);
     };
+
+    const inputElement = inputRef.current;
 
     window.addEventListener("keydown", onKey);
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    inputRef.current?.focus();
+    inputElement?.focus();
 
     return () => {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = previousOverflow;
-      inputRef.current?.focus();
+      inputElement?.focus();
     };
   }, [isMaximized]);
 
@@ -85,28 +80,25 @@ export default function TerminalOs() {
       return;
     }
 
-    setLines((previous) => [
-      ...previous,
-      ...withIds([
+    setLines((previous) => {
+      const nextLines = [
         { type: "command", content: command, animated: false },
         ...result.lines.map((line) => ({ ...line, animated: true })),
-      ]),
-    ]);
+      ] as NewLine[];
+
+      return [
+        ...previous,
+        ...nextLines.map((item, index) => ({
+          ...item,
+          id: previous.length + index + 1,
+        })),
+      ];
+    });
   };
 
   /* CLOSED */
   if (isClosed) {
-    return (
-      <div className="flex h-full w-full items-center justify-center rounded-xl border border-white/10 bg-black/30 p-8 text-white/60 backdrop-blur-xl">
-        <button
-          onClick={() => setIsClosed(false)}
-          className="rounded-lg border border-white/10 px-5 py-2 transition hover:border-lime-400/50 hover:text-lime-400"
-        >
-          <TerminalIcon size={16} className="mr-2 inline" />
-          Reopen Terminal
-        </button>
-      </div>
-    );
+    return null;
   }
 
   /* WINDOW */
