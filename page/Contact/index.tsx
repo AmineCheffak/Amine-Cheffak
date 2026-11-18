@@ -14,7 +14,7 @@ import {
 
 const EMAIL = "a.cheffak6604@uca.ac.ma";
 
-const SCRIPT_URL = process.env.NEXT_PUBLIC_CONTACT_SCRIPT_URL;
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzma9fkt0A5JKMje7UTxZ547nQIKxCir67wj6_Cdgf7d77M8ROFUZmxtGLUM0XBBAgK/exec";
 
 const socialLinks = [
   {
