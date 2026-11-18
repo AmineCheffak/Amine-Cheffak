@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://aminecheffak.vercel.app//sitemap.xml",
+    sitemap: "https://aminecheffak.vercel.app/sitemap.xml",
   };
 }

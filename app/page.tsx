@@ -1,9 +1,12 @@
-
-import Terminal from "@/Components/Terminal/page"
+import FatherPage from "@/page/FatherPage/"
+import Header from '@/components/Header'
+import Footer from "@/components/Footer"
 export default function Page(){
     return (
-        <div className="h-screen w-full">
-            <Terminal />
-        </div>
+        <>
+            <Header/>
+            <FatherPage/>
+            <Footer/>
+        </>
     )
 }

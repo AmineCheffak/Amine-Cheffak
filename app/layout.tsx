@@ -1,28 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
-import { Geist, Geist_Mono, Orbitron, Rajdhani } from "next/font/google";
+import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import CustomCursor from "@/components/CustomCursor";
 
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const display = Space_Grotesk({
   subsets: ["latin"],
+  variable: "--font-display",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const body = Inter({
   subsets: ["latin"],
+  variable: "--font-body",
 });
 
-const orbitron = Orbitron({
+const code = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-orbitron",
-});
-
-const rajdhani = Rajdhani({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-rajdhani",
+  variable: "--font-code",
 });
 
 const siteUrl = "https://aminecheffak.vercel.app";
@@ -57,12 +50,7 @@ export const metadata: Metadata = {
     "Automatisation",
   ],
 
-  authors: [
-    {
-      name: "Amine Cheffak",
-      url: siteUrl,
-    },
-  ],
+  authors: [{ name: "Amine Cheffak", url: siteUrl }],
 
   creator: "Amine Cheffak",
   publisher: "Amine Cheffak",
@@ -110,29 +98,21 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  colorScheme: "light dark",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
-    { media: "(prefers-color-scheme: dark)", color: "#09070F" },
-  ],
+  themeColor: "#09070F",
 };
 
 export default function RootLayout({
   children,
-}: LayoutProps<"/">) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html
       lang="fr"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-      suppressHydrationWarning
+      className={`${display.variable} ${body.variable} ${code.variable} h-full antialiased`}
     >
-      <body
-        className={`min-h-full flex flex-col ${orbitron.variable} ${rajdhani.variable}`}
-      >
-        <Script
-          id="theme-init"
-          strategy="beforeInteractive"
-        />
+      <body className="flex min-h-screen flex-col font-sans antialiased">
+        <CustomCursor />
         {children}
       </body>
     </html>
