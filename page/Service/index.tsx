@@ -8,10 +8,12 @@ import type { IconType } from "react-icons";
 import {
   SiNextdotjs,
   SiSpringboot,
-  SiAmazonaws,
+  SiDocker,
   SiTailwindcss,
   SiMysql,
   SiGithub,
+  SiSqlalchemy,
+  SiMyob,
 } from "react-icons/si";
 
 type Service = {
@@ -40,7 +42,7 @@ const services: Service[] = [
     title: "Cloud & Deployment",
     description:
       "Application deployment, containerization, and infrastructure configuration for reliable production environments.",
-    icon: SiAmazonaws,
+    icon: SiDocker,
     tags: ["AWS", "DOCKER", "DEPLOYMENT"],
   },
   {
