@@ -15,7 +15,7 @@ const projects: Project[] = [
     description:
       "Online store with product catalog, cart, and order management. REST API on the backend with a fast React storefront.",
     tags: ["SPRING BOOT", "REACT", "MYSQL"],
-    live: "🌐 https://prompt-blocks-ste-mug.trycloudflare.com",
+    live: "https://prompt-blocks-ste-mug.trycloudflare.com",
     repo: "#",
     image: "/project1.png",
   },
